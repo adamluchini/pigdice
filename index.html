@@ -31,13 +31,27 @@
     <div class="content">
       <div class="container">
         <form id="new-game">
-          <div class="form-group">
-            <label for="num-players">Number of players</label>
-            <select id="num-players-sel" class="form-control">
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="num-players">Number of players</label>
+                <select id="num-players-sel" class="form-control">
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="game-type">Game Type</label>
+                <select id="game-type-sel" class="form-control">
+                  <option value="Pig">Pig</option>
+                  <option value="Two Dice">Two Dice</option>
+                  <option value="Big Pig">Big Pig</option>
+                </select>
+              </div>
+            </div>
           </div>
           <button type="submit" id="new-game-sub">New Game</button>
         </form>

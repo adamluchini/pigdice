@@ -6,10 +6,10 @@ function Player(){
 Player.prototype.hold = function(){
   this.total += this.round;
   this.round = 0;
-  $('#player' + turn).text(players[turn].total);
-
-  var winners = winCondition(players);
-  if(turn === players.length - 1){
+  $('#player' + newGame.turn).text(newGame.players[newGame.turn].total);
+  var players = newGame.players;
+  var winners = newGame.winCondition(players);
+  if(newGame.turn === players.length - 1){
     if(winners.length > 0){
       winners.forEach(function(winner){
         $('#winners').append("<p>" + winner + "</p>");
@@ -20,31 +20,32 @@ Player.prototype.hold = function(){
     }
   }
 
-  if(turn === players.length - 1){
-    turn = 0;
+  if(newGame.turn === players.length - 1){
+    newGame.turn = 0;
   } else {
-    turn += 1;
+    newGame.turn += 1;
   }
-  $('#player-turn p').text(turn + 1);
-  // var winners = winCondition(players);
-  // if(turn + 1 = p)
-  // if(winners.length > 0){
-  //   $('#winners').append(winners);
-  // }
-
+  $('#player-turn p').text(newGame.turn + 1);
 
 }
 
-var checkDice = function(player, score, rules){
+function Game(name, dice, players){
+  this.name = name;
+  this.dice = dice;
+  this.players = players;
+  this.turn = 0;
+  this.round = 0;
+}
+
+Game.prototype.checkDice = function(dice){
   if(rules === 1){
     //traditional ruleset
-    if(score > 1){
-      player.round += score;
+    if(dice[0] > 1){
+      this.players[this.turn].round += dice[0];
     } else {
-      player.round = 0;
-      player.hold();
+      this.players[this.turn].round = 0;
+      this.players[this.turn].hold();
     }
-
   } else if(rules === 2){
 
   } else if(rules === 3){
@@ -54,63 +55,64 @@ var checkDice = function(player, score, rules){
   }
   //console.log(player.round);
   $('#score').text("");
-  $('#score').append(player.round);
+  $('#score').append(this.players[this.turn].round);
 
 };
 
-var roller = function(){
-  return Math.floor(Math.random() * (6)) + 1;
+Game.prototype.roller = function(){
+  var result = [];
+  if(this.dice === 1){
+    result.push(Math.floor(Math.random() * (6)) + 1);
+  } else {
+    for(var i = 0; i < this.dice; i++){
+      result.push(Math.floor(Math.random() * (6)) + 1);
+    }
+  }
+  return result;
 }
 
-var winCondition = function(players){
-  var playerLen = players.length;
+Game.prototype.winCondition = function(){
+
+  var playerLen = this.players.length;
   var winners = []
   for(var i = 0; i < playerLen; i++){
-    if(players[i].total >= 10){
+    if(newGame.players[i].total >= 10){
       winners.push(i + 1);
     }
   }
   return winners;
 }
 
-// object/method testing
-var test = function(){
-  var me = new Player();
-  var roll1 = 6;
-  var roll2 = 4;
-  checkDice(me, roll1, 1);
-  checkDice(me, roll2, 1);
-  me.hold();
-  players.push(me);
-  console.log(winCondition(players));
+var newGame = Object;
 
-}
-
-var players = [];
 
 //temporary for testing
 var rules = 1;
-var turn = 0;
-var round = 0;
 
 //interface
 $(function(){
   $('#new-game').submit(function(event){
     event.preventDefault();
-    //$('#game-board').toggle();
-    var numPlayers = parseInt($('select#num-players-sel').val());
+
     $('.play-buttons').prop("disabled",false);
     $('#player-bank').text("");
     $('#player-bank').prepend("<h2>Player Points</h2>");
+
+    var numPlayers = parseInt($('select#num-players-sel').val());
     var i = 0;
+    var players = [];
     while(i < numPlayers){
       players[i] = new Player();
-      // <li>Player 1: <span id="player0"></span></li>
       var string = "<p>Player " + (i+1) + ': <span id="player' + i + '">0</span></p>';
       $('#player-bank').append(string);
-      console.log(string);
       i++
     }
+
+    var gameType = $('select#game-type-sel').val();
+    var dice = 0;
+    (gameType === "Pig") ? dice = 1 : dice = 2;
+
+    newGame = new Game(gameType, dice, players);
 
     $('#round-total').text("");
     $('#round-total').prepend("<h2>Round Total</h2>");
@@ -120,22 +122,28 @@ $(function(){
     $('#hold-button').show();
     $('#round-total').show();
     $('#winner-box').show();
-    $('#player-turn p').text(turn + 1);
+    $('#player-turn p').text(newGame.turn + 1);
   });
 
   $('#roll-dice-button').click(function(event){
-    var rando = roller();
-    var hex = 9855 + rando;
+    console.log(JSON.stringify(newGame));
+    var rando = newGame.roller();
 
-    $('#die-face').html('&#' + hex + ";");
-    checkDice(players[turn], rando, rules);
+    $('#die-face').text("");
+    rando.forEach(function(num){
+      var hex = 9855 + num;
+      $('#die-face').html('&#' + hex + ";");
+    })
+
+    newGame.checkDice(rando);
   });
 
   $('#hold-button').click(function(event){
-    players[turn].hold();
+
+    newGame.players[newGame.turn].hold();
     //turn += 1;
     $('#die-face').text("");
-    $('#player-turn p').text(turn + 1);
+    $('#player-turn p').text(newGame.turn + 1);
   });
 
 })
