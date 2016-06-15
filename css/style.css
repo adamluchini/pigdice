@@ -1,0 +1,19 @@
+.content {
+  margin-top: 75px;
+}
+
+#roll-dice-button, #player-turn, #hold-button, #round-total, #winner-box {
+  display: none;
+}
+
+#dice-roller {
+  margin-top: 25px;
+}
+#game-board {
+  min-height: 300px;
+}
+
+#die-face{
+  font-size: 80pt;
+  text-align: center;
+}
