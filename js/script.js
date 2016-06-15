@@ -53,7 +53,6 @@ Game.prototype.checkDice = function(dice){
   } else {
 
   }
-  //console.log(player.round);
   $('#score').text("");
   $('#score').append(this.players[this.turn].round);
 
@@ -143,6 +142,7 @@ $(function(){
     newGame.players[newGame.turn].hold();
     //turn += 1;
     $('#die-face').text("");
+    $('#score').text("");
     $('#player-turn p').text(newGame.turn + 1);
   });
 
